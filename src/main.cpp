@@ -23,12 +23,18 @@ int main() {
 
 
   string result = "";
-  string ascii = ":. ";
+  // brighness values from dark to bright @#W$9876543210?!abc;:+=-,_
+  //string ascii = " _.,-=+:;!?018$W#@";
+  string ascii = " .,:;!?$#@";  // best
+  //string ascii = " .,:;";
+
+
   int lenght_ascii = ascii.length();
+  int brightness_steps = 255 / lenght_ascii;
   string type = "", width = "", height = "", maxVal = "";
 
   ifstream origin;
-  origin.open("origin.ppm");
+  origin.open("sinon.ppm");
 
   // read head of file
   origin >> type;
@@ -50,17 +56,15 @@ int main() {
     G = stoi(g);
     B = stoi(b);
 
-    float brightness = R * 0.3 + G * 0.59 + B * 0.11;
+    //Luminace
+    //float brightness = R * 0.3 + G * 0.59 + B * 0.11;
 
-    if(brightness < 255/3) {
-      result.append(" ");
-    } else if(brightness < 255/2) {
-      result.append(".");
-    } else if(brightness < 255/1) {
-      result.append(":");
-    }
+    // durchschnitt
+    float brightness = (R + G + B) / 3;
 
-    cout << _width << endl;
+    int right_char = brightness / brightness_steps;
+    result = result + ascii[right_char];
+
     if(result.length()%(_width+1) == 0) {
         result.append("\n");
     }
