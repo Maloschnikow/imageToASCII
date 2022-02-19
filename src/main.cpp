@@ -4,22 +4,11 @@
 using namespace std;
 
 int main() {
-
-  /*ofstream create;
-
-  create.open("origin.ppm");
-
-  create << "P3 " << endl;
-  create << "20 20 " << endl;
-  create << "255 " << endl;
-
-  for(int y = 0; y<20;y++){
-    for(int x=0;x<20;x++) {
-      create << x*y%255 << " " << x*y%255 << " " << x*y%255 << " " << endl;
-    }
-  }
-
-  create.close();*/
+  string filename;
+  cout << "NOTES: (1) Only .ppm is supported!" << endl
+       << "       (2) Make sure to scale your image down enough! (> 100x100 is not recommended)" << endl
+       << "Input the filename: " << endl;
+  cin >> filename;
 
 
   string result = "";
@@ -34,7 +23,8 @@ int main() {
   string type = "", width = "", height = "", maxVal = "";
 
   ifstream origin;
-  origin.open("sinon.ppm");
+
+  origin.open(filename);
 
   // read head of file
   origin >> type;
