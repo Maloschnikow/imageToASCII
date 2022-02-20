@@ -6,7 +6,8 @@ using namespace std;
 int main() {
   string filename;
   cout << "NOTES: (1) Only .ppm is supported!" << endl
-       << "       (2) Make sure to scale your image down enough! (> 100x100 is not recommended)" << endl
+       << "       (2) Make sure there are only numbers in the .ppm file and no line beginns with #!" << endl
+       << "       (3) Make sure to scale your image down enough! (> 100x100 is not recommended)" << endl
        << "Input the filename: " << endl;
   cin >> filename;
 
@@ -15,6 +16,9 @@ int main() {
   // brighness values from dark to bright @#W$9876543210?!abc;:+=-,_
   //string ascii = " _.,-=+:;!?018$W#@";
   string ascii = " .,:;!?$#@";  // best
+  //              0123456789
+  //string ascii = " .,:;";
+
   //string ascii = " .,:;";
 
 
@@ -47,13 +51,14 @@ int main() {
     B = stoi(b);
 
     //Luminace
-    //float brightness = R * 0.3 + G * 0.59 + B * 0.11;
+    float brightness = R * 0.3 + G * 0.59 + B * 0.11;
 
     // durchschnitt
-    float brightness = (R + G + B) / 3;
+    //float brightness = (R + G + B) / 3;
 
     int right_char = brightness / brightness_steps;
-    result = result + ascii[right_char];
+    if(right_char == 0) { ++right_char; }
+    result = result + ascii[right_char-1];
 
     if(result.length()%(_width+1) == 0) {
         result.append("\n");
