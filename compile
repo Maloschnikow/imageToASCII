@@ -1,4 +1,0 @@
-#!/bin/bash
-
-
-c++ src/main.cpp -o build/linux_main.exe

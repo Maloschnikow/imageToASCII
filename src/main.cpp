@@ -1,72 +1,145 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
+#include "Image.h"
 
 using namespace std;
 
 int main() {
-  string filename;
-  cout << "NOTES: (1) Only .ppm is supported!" << endl
-       << "       (2) Make sure there are only numbers in the .ppm file and no line beginns with #!" << endl
-       << "       (3) Make sure to scale your image down enough! (> 100x100 is not recommended)" << endl
-       << "Input the filename: " << endl;
-  cin >> filename;
 
-
-  string result = "";
-  // brighness values from dark to bright @#W$9876543210?!abc;:+=-,_
-  //string ascii = " _.,-=+:;!?018$W#@";
+  // declaraion
   string ascii = " .,:;!?$#@";  // best
-  //              0123456789
-  //string ascii = " .,:;";
-
-  //string ascii = " .,:;";
-
-
   int lenght_ascii = ascii.length();
   int brightness_steps = 255 / lenght_ascii;
-  string type = "", width = "", height = "", maxVal = "";
 
-  ifstream origin;
+  //User input
+  string filename;
+  cout << "Wie heißt die Datei?" << endl;
+  cin >> filename;
 
-  origin.open(filename);
+  Image origin(filename.c_str());
 
-  // read head of file
-  origin >> type;
-  origin >> width;
-  origin >> height;
-  origin >> maxVal;
+  int input_width;
+  cout << "Wie breit soll das Bild am Ende sein (Original:" << origin.w << "x" << origin.h << "):" << endl;
+  cin >> input_width;
 
-  int _width = stoi(width);
+  int render_opt;
+  cout << "Wie soll die Helligkeit eines Pixels ermittlet werden?" << endl
+       << "(1) Leuchtdichte der RGB Werte (realistischer)" << endl
+       << "(2) Durchschnitt der RGB Werte" << endl;
+  cin >> render_opt;
 
-  // read body of file
-  string r = "", g = "", b = "";
-  int R, G, B;
-  while(!origin.eof()){
-    origin >> r;
-    origin >> g;
-    origin >> b;
+  int brightness_boost;
+  cout << "Helligkeitsmodifikator (Standard: 1):" << endl;
+  cin >> brightness_boost;
 
-    R = stoi(r);
-    G = stoi(g);
-    B = stoi(b);
+  // resizing image
+  int input_height = float(input_width) / float(origin.w) * origin.h;
+  Image resized(input_width, input_height, origin.channels);
+  origin.resize(resized.data, input_width, input_height);
 
-    //Luminace
-    float brightness = R * 0.3 + G * 0.59 + B * 0.11;
-
-    // durchschnitt
-    //float brightness = (R + G + B) / 3;
-
-    int right_char = brightness / brightness_steps;
-    if(right_char == 0) { ++right_char; }
-    result = result + ascii[right_char-1];
-
-    if(result.length()%(_width+1) == 0) {
-        result.append("\n");
-    }
-
+  if(resized.channels < 3) {
+    cout << "Image type is not supported!" << endl;
+    return 1;
   }
-  std::cout << result << endl;
 
-  origin.close();
+  //loop through image
+  string html_result = "&nbsp";
+  string result = "\n";
+  int count=0;
+  for(int y=0; y < resized.h; ++y){
+    for(int x = 0; x < resized.w; ++x){
+      int rgb[4];
+      for(int ch=0; ch < resized.channels; ++ch) {
+        rgb[ch] = resized.data[count+ch];
+
+      }
+      float R = rgb[0];
+      float G = rgb[1];
+      float B = rgb[2];
+
+      stringstream sr;
+      stringstream sg;
+      stringstream sb;
+      sr << R;
+      sg << G;
+      sb << B;
+      string sR = sr.str();
+      string sG = sg.str();
+      string sB = sb.str();
+
+      float brightness;
+      switch (render_opt) {
+        case 1:
+          brightness = R * 0.2126 + G * 0.7152 + B * 0.0722 * brightness_boost;
+          break;
+        case 2:
+          brightness = (R+G+B)/3 * brightness_boost;
+          break;
+        default:
+          cout << "Invalid Render Option!" << endl;
+          return 0;
+      }
+
+      int right_char = brightness / brightness_steps -1;
+      if(right_char <= 0) {
+        result = result + ascii[0];
+        html_result.append("&nbsp");
+      } else if(right_char >= lenght_ascii) {
+        result = result + ascii[lenght_ascii -1];
+        html_result = html_result + "<dif style=\"color: rgb(" + sR + "," + sG + "," + sB +");\">" + ascii[lenght_ascii-1] + "</dif>";
+      } else {
+        result = result + ascii[right_char];
+        html_result = html_result + "<dif style=\"color: rgb(" + sR + "," + sG + "," + sB +");\">" + ascii[right_char] + "</dif>";
+      }
+
+      if(result.length()%(resized.w+1) == 0) {
+          result.append("\n");
+          html_result.append("</br>");
+      }
+
+      count = count + resized.channels;
+    }
+  }
+
+
+  cout << "RESULT:\n" << result << endl;
+
+  cout << "Writing HTML and CSS..." << endl;
+  // write html file
+  ofstream html;
+  html.open("HTML.html");
+
+  html << "<html>" << endl
+       << "<head>" << endl
+       << "<link rel=\"stylesheet\" href=\"style.css\">" << endl
+       << "</head>" << endl
+       << "<body>" << endl
+       << html_result << endl
+       << "</body>" << endl
+       << "</html>" << endl;
+
+  html.close();
+
+
+  // write css file
+  ofstream css;
+  css.open("style.css");
+  css << "body {" << endl
+      << "line-height: 6px;" << endl
+      << "font-size: 9px;" << endl
+      << "color: white;" << endl
+      << "background-color: #000000;" << endl
+      << "font-family: \"Consolas\";" << endl
+      << "text-align: center;" << endl
+      << "position: absolute;" << endl
+      << "top: 50%;" << endl
+      << "left: 50%;" << endl
+      << "transform: translate(-50%, -50%);" << endl
+      << "}" << endl;
+
+  css.close();
+  cout << "Done!" << endl;
+
   return 0;
 }
