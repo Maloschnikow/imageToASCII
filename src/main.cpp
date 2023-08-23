@@ -1,37 +1,48 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include "Image.h"
+#include "Image.hpp"
+#include "Config.hpp"
 
 using namespace std;
 
 int main() {
 
-  // declaraion
-  string ascii = " .,:;!?$#@";  // best
+  //Load config
+  string ascii = " .,:;!?$#@";  // standard, but can be configured
+  string sinput_width;
+  string srender_opt;
+  string sbrightness_boost;
+  string configASCII;
+
+  int input_width;
+  int render_opt;
+  int brightness_boost;
+
+  Config cfg;
+  cfg.read("../rcs/config.txt");
+  sinput_width = cfg.getValueByKey("newWidth");
+  srender_opt = cfg.getValueByKey("brightnessType");
+  sbrightness_boost = cfg.getValueByKey("brightnessBoost");
+  configASCII = cfg.getValueByKey("ASCII");
+
+  //check config and set values acordingly
+  input_width = stoi(sinput_width);
+  brightness_boost = stoi(sbrightness_boost);
+  if (srender_opt.compare("LUMINANCE") == 0) { render_opt = 1; }
+  else if (srender_opt.compare("AVERAGE") == 0) { render_opt = 2; }
+  else { render_opt = -1; }
+  if (!configASCII.empty() && configASCII.size() >= 1) {
+    ascii = configASCII;
+  }
   int lenght_ascii = ascii.length();
   int brightness_steps = 255 / lenght_ascii;
 
-  //User input
   string filename;
   cout << "Wie heißt die Datei?" << endl;
   cin >> filename;
-
+  
   Image origin(filename.c_str());
-
-  int input_width;
-  cout << "Wie breit soll das Bild am Ende sein (Original:" << origin.w << "x" << origin.h << "):" << endl;
-  cin >> input_width;
-
-  int render_opt;
-  cout << "Wie soll die Helligkeit eines Pixels ermittlet werden?" << endl
-       << "(1) Leuchtdichte der RGB Werte (realistischer)" << endl
-       << "(2) Durchschnitt der RGB Werte" << endl;
-  cin >> render_opt;
-
-  int brightness_boost;
-  cout << "Helligkeitsmodifikator (Standard: 1):" << endl;
-  cin >> brightness_boost;
 
   // resizing image
   int input_height = float(input_width) / float(origin.w) * origin.h;

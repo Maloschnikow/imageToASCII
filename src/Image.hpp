@@ -1,6 +1,6 @@
 #include <iostream>
 #include <stdint.h>
-
+#pragma once
 enum ImageType {
   PNG,
   JPG,
