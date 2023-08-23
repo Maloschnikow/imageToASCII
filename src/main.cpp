@@ -6,6 +6,41 @@
 
 using namespace std;
 
+void writeCSSfile() {
+  ofstream css;
+  css.open("style.css");
+  css << "body {" << endl
+      << "line-height: 6px;" << endl
+      << "font-size: 9px;" << endl
+      << "color: white;" << endl
+      << "background-color: #000000;" << endl
+      << "font-family: \"Consolas\";" << endl
+      << "text-align: center;" << endl
+      << "position: absolute;" << endl
+      << "top: 50%;" << endl
+      << "left: 50%;" << endl
+      << "transform: translate(-50%, -50%);" << endl
+      << "}" << endl;
+
+  css.close();
+}
+
+void writeHTMLfile(string data) {
+  ofstream html;
+  html.open("HTML.html");
+  html << "<html>" << endl
+       << "<head>" << endl
+       << "<link rel=\"stylesheet\" href=\"style.css\">" << endl
+       << "</head>" << endl
+       << "<body>" << endl
+       << data << endl
+       << "</body>" << endl
+       << "</html>" << endl;
+
+  html.close();
+}
+
+
 int main() {
 
   //Load config
@@ -38,17 +73,21 @@ int main() {
   int lenght_ascii = ascii.length();
   int brightness_steps = 255 / lenght_ascii;
 
+  //Print loaded config
+  cout << "|=- Config loaded -=|" << endl;
+  cfg.printAllData();
+  cout << endl;
+
+  //User input
   string filename;
-  cout << "Wie heißt die Datei?" << endl;
+  cout << "Image filename: " << endl;
   cin >> filename;
   
   Image origin(filename.c_str());
-
-  // resizing image
+  //resizing image
   int input_height = float(input_width) / float(origin.w) * origin.h;
   Image resized(input_width, input_height, origin.channels);
   origin.resize(resized.data, input_width, input_height);
-
   if(resized.channels < 3) {
     cout << "Image type is not supported!" << endl;
     return 1;
@@ -108,48 +147,16 @@ int main() {
           result.append("\n");
           html_result.append("</br>");
       }
-
       count = count + resized.channels;
     }
   }
 
-
+  //print result
   cout << "RESULT:\n" << result << endl;
-
   cout << "Writing HTML and CSS..." << endl;
-  // write html file
-  ofstream html;
-  html.open("HTML.html");
-
-  html << "<html>" << endl
-       << "<head>" << endl
-       << "<link rel=\"stylesheet\" href=\"style.css\">" << endl
-       << "</head>" << endl
-       << "<body>" << endl
-       << html_result << endl
-       << "</body>" << endl
-       << "</html>" << endl;
-
-  html.close();
-
-
-  // write css file
-  ofstream css;
-  css.open("style.css");
-  css << "body {" << endl
-      << "line-height: 6px;" << endl
-      << "font-size: 9px;" << endl
-      << "color: white;" << endl
-      << "background-color: #000000;" << endl
-      << "font-family: \"Consolas\";" << endl
-      << "text-align: center;" << endl
-      << "position: absolute;" << endl
-      << "top: 50%;" << endl
-      << "left: 50%;" << endl
-      << "transform: translate(-50%, -50%);" << endl
-      << "}" << endl;
-
-  css.close();
+  // write html and css files
+  writeHTMLfile(html_result);
+  writeCSSfile();
   cout << "Done!" << endl;
 
   return 0;
