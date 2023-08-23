@@ -46,27 +46,27 @@ int main() {
   //Load config
   string ascii = " .,:;!?$#@";  // standard, but can be configured
   string sinput_width;
-  string srender_opt;
+  string sbrightnessType;
   string sbrightness_boost;
   string configASCII;
 
   int input_width;
-  int render_opt;
+  int brightnessType;
   int brightness_boost;
 
   Config cfg;
   cfg.read("../rcs/config.txt");
   sinput_width = cfg.getValueByKey("newWidth");
-  srender_opt = cfg.getValueByKey("brightnessType");
+  sbrightnessType = cfg.getValueByKey("brightnessType");
   sbrightness_boost = cfg.getValueByKey("brightnessBoost");
   configASCII = cfg.getValueByKey("ASCII");
 
   //check config and set values acordingly
   input_width = stoi(sinput_width);
   brightness_boost = stoi(sbrightness_boost);
-  if (srender_opt.compare("LUMINANCE") == 0) { render_opt = 1; }
-  else if (srender_opt.compare("AVERAGE") == 0) { render_opt = 2; }
-  else { render_opt = -1; }
+  if (sbrightnessType.compare("LUMINANCE") == 0) { brightnessType = 1; }
+  else if (sbrightnessType.compare("AVERAGE") == 0) { brightnessType = 2; }
+  else { brightnessType = -1; }
   if (!configASCII.empty() && configASCII.size() >= 1) {
     ascii = configASCII;
   }
@@ -107,7 +107,6 @@ int main() {
       float R = rgb[0];
       float G = rgb[1];
       float B = rgb[2];
-
       stringstream sr;
       stringstream sg;
       stringstream sb;
@@ -119,7 +118,7 @@ int main() {
       string sB = sb.str();
 
       float brightness;
-      switch (render_opt) {
+      switch (brightnessType) {
         case 1:
           brightness = R * 0.2126 + G * 0.7152 + B * 0.0722 * brightness_boost;
           break;
@@ -154,7 +153,7 @@ int main() {
   //print result
   cout << "RESULT:\n" << result << endl;
   cout << "Writing HTML and CSS..." << endl;
-  // write html and css files
+  //write html and css files
   writeHTMLfile(html_result);
   writeCSSfile();
   cout << "Done!" << endl;
