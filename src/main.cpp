@@ -7,9 +7,21 @@
 
 using namespace std;
 
-int main() {
+int main(int argc, char *argv[]) {
 
-  Config cfg("../rcs/config.txt");
+  string configPath = "../rcs/config.txt";
+  string imagePath;
+  if(argc > 1) {
+    imagePath = argv[1];
+  } else {
+    cout << "No path to image provided. Abort." << endl;
+    return 1;
+  }
+  if(argc > 2) {
+    configPath = argv[2];
+  }
+
+  Config cfg(configPath.c_str());
   cout << "= Config loaded =" << endl;
   cfg.printAllData();
   cout << endl;
@@ -24,13 +36,7 @@ int main() {
   }
   
   int input_width = stoi(sinput_width);
-
-  //User input
-  string filename;
-  cout << "Image filename: " << endl;
-  cin >> filename;
-  
-  Image origin(filename.c_str());
+  Image origin(imagePath.c_str());
 
   //resizing image
   int input_height = float(input_width) / float(origin.w) * origin.h;
