@@ -2,13 +2,11 @@
 #include <fstream>
 #include <iostream>
 
-Config::Config () {
-
+Config::Config (const char* filename) {
+    read(filename);
 }
 
-Config::~Config (){
-
-} 
+Config::~Config (){} 
 
 std::string Config::getValueByKey(std::string key) {
     if(data.find(key) != data.end()) {
@@ -19,10 +17,9 @@ std::string Config::getValueByKey(std::string key) {
 
 void Config::printAllData() {
     for(std::pair<std::string, std::string> p : data) {
-        std::cout << p.first << " : " << p.second << std::endl;
+        std::cout << p.first << ": " << p.second << std::endl;
     }
 }
-
 
 void Config::read(const char* filename) {
     std::string line;

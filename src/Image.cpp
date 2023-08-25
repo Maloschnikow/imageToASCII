@@ -5,6 +5,7 @@
 #include "stb-master/stb_image.h"
 #include "stb-master/stb_image_write.h"
 #include "stb-master/stb_image_resize.h"
+#include <fstream>
 
 using namespace std;
 

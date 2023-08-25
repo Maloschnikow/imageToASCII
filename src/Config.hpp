@@ -4,7 +4,7 @@
 
 class Config {
 public:
-    Config();
+    Config(const char* filename);
     ~Config();
     void read(const char* filename);
     std::string getValueByKey(std::string key);

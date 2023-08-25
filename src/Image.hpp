@@ -10,7 +10,8 @@ enum ImageType {
 
 
 
-struct Image {
+class Image {
+public:
   uint8_t* data = NULL;
   size_t size = 0;
   int w;
@@ -26,6 +27,7 @@ struct Image {
   bool write(const char* filename);
   bool resize(uint8_t* data2, int out_w, int out_h);
 
-
   ImageType getFileType(const char* filename);
+
+private:
 };
