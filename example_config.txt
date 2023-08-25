@@ -1,0 +1,4 @@
+newWidth=84
+brightnessType=LUMINANCE
+brightnessBoost=1
+ASCII= .,:;!?$#@
