@@ -55,15 +55,25 @@ std::string ImageASCII::convertImage(Image &image) {
 
     int brightnessType;
     int brightness_boost;
-    try {
-        sbrightnessType = config->getValueByKey("brightnessType");
-        sbrightness_boost = config->getValueByKey("brightnessBoost");
-        asciiSet = config->getValueByKey("ASCII");
+
+    bool successConfigRead = false;
+    while (!successConfigRead) {
+        try {
+            sbrightnessType = config->getValueByKey("brightnessType");
+            sbrightness_boost = config->getValueByKey("brightnessBoost");
+            asciiSet = config->getValueByKey("ASCII");
+            successConfigRead = true;
+            break;
+        }
+        catch (ConfigNotFoundException e) {
+            successConfigRead = false;
+            cout << e.what() << ": " <<config->get_filename() << endl;
+            if (!this->config->writeStandardConfig(true)) {
+                return nullptr;
+            }
+        }
     }
-    catch (ConfigNotFoundException e) {
-        cout << e.what() << ": " <<config->get_filename() << endl;
-        return nullptr;
-    }
+    
     
 
     //check config and set values acordingly

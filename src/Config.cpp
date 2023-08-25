@@ -2,6 +2,8 @@
 #include <fstream>
 #include <iostream>
 
+
+
 const char* ConfigNotFoundException::what() {
     return "Configuration option not found";
 }
@@ -10,8 +12,10 @@ const char* InvalidConfigOptionException::what() {
     return "Configuration option invalid";
 }
 
-Config::Config (const char* filename) {
-    read(filename);
+Config::Config (const char* _filename, const char* _standardConfigData)
+:standardConfigData(_standardConfigData)
+{
+    read(_filename);
 }
 
 Config::~Config (){} 
@@ -50,4 +54,27 @@ void Config::read(const char* filename) {
 
 const char* Config::get_filename() {
     return this->filename;
+}
+
+void Config::writeConfig(const char* data) {
+    std::ofstream configFile;
+    configFile.open(this->filename, std::ofstream::trunc);
+    configFile << data;
+    configFile.close();
+    read(this->filename);
+}
+
+bool Config::writeStandardConfig(bool promptUser) {
+    if (promptUser) {
+        std::string in;
+        std::cout << "\nStandard Configuration:" << std::endl;
+        std::cout << standardConfigData << std::endl;
+        std::cout << "Create a standard config file and override the currently loaded file? (y/n): ";
+        std::cin >> in;
+        if(in.compare("y") != 0) {
+            return false;
+        }
+    }
+    writeConfig(this->standardConfigData);
+    return true;
 }
