@@ -13,10 +13,16 @@ int main() {
   cout << "= Config loaded =" << endl;
   cfg.printAllData();
   cout << endl;
-
   ImageASCII imageASCII(&cfg);
-
-  string sinput_width = cfg.getValueByKey("newWidth");
+  string sinput_width;
+  try {
+    sinput_width = cfg.getValueByKey("newWidth");
+  }
+  catch (ConfigNotFoundException e) {
+    cout << e.what() << ": " << cfg.get_filename() << endl;
+    return 1;
+  }
+  
   int input_width = stoi(sinput_width);
 
   //User input
@@ -35,7 +41,15 @@ int main() {
     return 1;
   }
 
-  string result = imageASCII.convertImage(resized);
+  string result;
+  try {
+    result = imageASCII.convertImage(resized);
+  }
+  catch (InvalidConfigOptionException e) {
+    cout << e.what() << endl;
+    return 1;
+  }
+  
   
   //print result
   cout << "RESULT:\n" << result << endl;

@@ -2,6 +2,14 @@
 #include <fstream>
 #include <iostream>
 
+const char* ConfigNotFoundException::what() {
+    return "Configuration option not found";
+}
+
+const char* InvalidConfigOptionException::what() {
+    return "Configuration option invalid";
+}
+
 Config::Config (const char* filename) {
     read(filename);
 }
@@ -12,6 +20,8 @@ std::string Config::getValueByKey(std::string key) {
     if(data.find(key) != data.end()) {
         return data[key];
     }
+    ConfigNotFoundException e;
+    throw e;
     return nullptr;
 }
 
@@ -35,4 +45,9 @@ void Config::read(const char* filename) {
         }
     }
     configFile.close();
+    this->filename = filename;
+}
+
+const char* Config::get_filename() {
+    return this->filename;
 }
