@@ -9,7 +9,7 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
 
-  string configPath = "../rcs/config.txt";
+  string configPath = "config.txt";
   string imagePath;
   if(argc > 1) {
     imagePath = argv[1];
