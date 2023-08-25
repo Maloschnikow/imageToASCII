@@ -69,6 +69,7 @@ bool Config::writeStandardConfig(bool promptUser) {
         std::string in;
         std::cout << "\nStandard Configuration:" << std::endl;
         std::cout << standardConfigData << std::endl;
+        std::cout << "Current config file: " << this->filename << std::endl;
         std::cout << "Create a standard config file and override the currently loaded file? (y/n): ";
         std::cin >> in;
         if(in.compare("y") != 0) {
