@@ -1,0 +1,4 @@
+newWidth=42
+brightnessType=AVERAGE
+brightnessBoost=2
+ASCII= .:
